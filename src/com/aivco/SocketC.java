@@ -42,7 +42,8 @@ public class SocketC {
         System.out.println("client is running");
         socket = new Socket(url, port);
        // writeBufferedStream(("hey server its i your new client  ").getBytes());
-        writeBufferedStream((outgoingAsFile()));
+        //writeBufferedStream((outgoingAsFile()));
+        writeAsJavaObject(outgoingAsFile());
        readStream();
 
 
@@ -107,7 +108,7 @@ public class SocketC {
 
     ////will return a bytearray,the byte could holds a file an image music or document etc///////
     private byte[] outgoingAsFile(){
-      File file=new File(workingDir+sep+"images"+sep+"tommy-blouse224.jpg");
+      File file=new File(workingDir+sep+"images"+sep+"bigimage.jpg");
         FileInputStream fis=null;
         byte [] b=null;
         try {
@@ -143,4 +144,20 @@ public class SocketC {
     public void setLen(int lent) {
         len = lent;
     }
+
+    public void writeAsJavaObject(byte[] bytes)
+    {
+        try {
+            ObjectOutputStream ous=new ObjectOutputStream(socket.getOutputStream());
+            ous.writeObject(bytes);
+            ous.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+
+
 }
