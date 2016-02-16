@@ -41,7 +41,7 @@ public class SocketC {
     public  void connectClientSocket() throws IOException {
         System.out.println("client is running");
         socket = new Socket(url, port);
-        //writeBufferedStream(("hey server its i your new client  \n").getBytes());
+       // writeBufferedStream(("hey server its i your new client  ").getBytes());
         writeBufferedStream((outgoingAsFile()));
        readStream();
 
@@ -93,11 +93,11 @@ public class SocketC {
 
     }
 
+    /////writes data as stream,this could be a file or a raw string.////////////////////
     private void writeBufferedStream(byte[] b) throws IOException {
         System.out.println("...........writing stream message.......in client..... " + "\n");
         BufferedOutputStream dos=new BufferedOutputStream(socket.getOutputStream());
         dos.write(b);
-        System.out.println(getLen());
         dos.flush();
 
 
@@ -105,15 +105,15 @@ public class SocketC {
     }
 
 
-    ////when return a bytearray representing the file to be read///////
-
+    ////will return a bytearray,the byte could holds a file an image music or document etc///////
     private byte[] outgoingAsFile(){
-      File file=new File(workingDir+sep+"images"+sep+"bigimage.jpg");
+      File file=new File(workingDir+sep+"images"+sep+"tommy-blouse224.jpg");
         FileInputStream fis=null;
         byte [] b=null;
         try {
              fis=new FileInputStream(file);
             this.setLen(fis.available());
+            System.out.println("size of byte is "+getLen());
            b=new byte[getLen()];
             fis.read(b,0,b.length);
 
