@@ -1,6 +1,7 @@
 package com.aivco;
 
 import java.io.*;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -14,15 +15,15 @@ public class SocketS {
     BufferedWriter bW;
     static String sep= File.separator;
     static String workingDir = System.getProperty("user.dir");
-    private String url;
-    public SocketS(int port,String url) {
-        this.port = port;this.url=url;
+    private InetAddress address;
+    public SocketS(int port,InetAddress address) {
+        this.port = port;this.address=address;
     }
 
     public static void main(String[] arg)
     {
         try {
-            new SocketS(1090,"127.0.0.1").startServerSocket();
+            new SocketS(1090,InetAddress.getLocalHost()).startServerSocket();
 
 
         } catch (IOException e) {
@@ -33,7 +34,8 @@ public class SocketS {
     }
 
     public void startServerSocket() throws IOException {
-        ServerSocket Sc=new ServerSocket(port);
+
+        ServerSocket Sc=new ServerSocket(port,50,address);
 
         System.out.println("server is running");
         socket=Sc.accept();///blocks here
