@@ -5,6 +5,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+
 /**
  * Created by joel on 2/14/16.
  */
@@ -16,15 +17,17 @@ public class SocketS {
     static String sep= File.separator;
     static String workingDir = System.getProperty("user.dir");
     private InetAddress address;
+
     public SocketS(int port,InetAddress address) {
         this.port = port;this.address=address;
     }
 
     public static void main(String[] arg)
     {
-        try {
+        try
+        {
             new SocketS(1090,InetAddress.getLocalHost()).startServerSocket();
-
+            System.out.println(InetAddress.getLocalHost().toString());
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -33,26 +36,25 @@ public class SocketS {
 
     }
 
-    public void startServerSocket() throws IOException {
+    public void startServerSocket() throws IOException
+    {
 
         ServerSocket Sc=new ServerSocket(port,50,address);
-
         System.out.println("server is running");
         socket=Sc.accept();///blocks here
         System.out.println("......client has arrived.......");
-        readBufferedStream();
-        writeStream("hey client i got your message hope you are great \n".getBytes());
+       // handleIncomingStreamAsFile(readStreamAsJavaObject());
+        //handleIncomingStreamAsFile(readBufferedStream());
+
+       // readWithBufferReader();
+        readStream();
+        writeStream("hey client i got your message hope you are great  \r ".getBytes());
         socket.close();
 
     }
 
 
-
-    private boolean isServerRunning()
-    {
-        return false;
-    }
-
+/////////the method below is used to read and write ascii ie strings//////////////////
    private void readWithBufferReader() throws IOException {
        System.out.println("......reading message from client.......");
        BufferedReader bR = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -76,11 +78,17 @@ public class SocketS {
 
 
     }
-    private void readStream() throws IOException {
+    /*
+    * uses dataInputStream to read bytes,as int from inputStream
+    * */
+    private void readStream() throws IOException
+    {
+        byte[] b = new byte[50];
 ////without the lines below it does not block///////////////////////////
         DataInputStream dis=new DataInputStream(socket.getInputStream());//does not have any effect on the stream
         int c;
-        while((c=dis.read())!= 10)//reading begins here,decimal 10 reps \n EOF in ascii,at this point this socket stops reading,this allows execution to pass
+
+        while((c=dis.read())!= 13)//reading begins here,decimal 10 reps \n EOF in ascii,at this point this socket stops reading,this allows execution to pass
         ////not reading the right value will block at this point because the reader wont know when to stop reading
         {
 
@@ -92,19 +100,20 @@ public class SocketS {
 
 
 
-    private void readBufferedStream() throws IOException {
+    private byte[] readBufferedStream() throws IOException
+    {
         byte[] b = null;
         System.out.println("......reading message from client.......");
         BufferedInputStream dis = new BufferedInputStream(socket.getInputStream());
         int nob = dis.available();
         System.out.println("......available bytes......." + nob);
-        b = new byte[98965];
+        b = new byte[1024*97];
         dis.read(b, 0, b.length);
-        System.out.println(handleIncomingStreamAsFile(b));
+        return b;
 
     }
 
-   private String handlestreamsAsString(byte [] b)
+   private String handleIncomingAsString(byte [] b)
    {
 
 
@@ -139,6 +148,23 @@ public class SocketS {
 
        return dir;
    }
+
+
+  public byte[] readStreamAsJavaObject()  {
+      ObjectInputStream is= null;
+      byte []b=null;
+      try {
+          is = new ObjectInputStream(socket.getInputStream());
+          b=(byte [])is.readObject();
+      } catch (IOException e) {
+          e.printStackTrace();
+      } catch (ClassNotFoundException e) {
+          e.printStackTrace();
+      }
+
+
+      return b;
+  }
 
 
 
